@@ -322,9 +322,9 @@ function layoutDetect() {
     return (
         <div className="layoutDetect">
             <div className="container-xxl">
-                <div className="layoutDetect-Wrap text-center">
-                    <textarea id="textInput" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
-                    <p><button onClick={handleDetect} className="buttonDetect col-1 btn btn-success">Detect</button></p>
+                <div className="layoutDetect-Wrap p-3 text-center">
+                    <textarea id="textInput" className="rounded col-12 col-md-8" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
+                    <p><button onClick={handleDetect} className="buttonDetect col-md-1 col-3 btn btn-success">Detect</button></p>
                     
                     <div className="col-12 row">
                     {/* Hiển thị kết quả detect ngôn ngữ */}
@@ -362,6 +362,7 @@ function layoutDetect() {
                         value={targetLanguage} 
                         onChange={(e) => setTargetLanguage(e.target.value)}
                     >
+                        <option value="en">English</option>
                         <option value="af">Afrikaans</option>
                         <option value="am">Amharic</option>
                         <option value="ar">Arabic</option>
@@ -471,7 +472,7 @@ function layoutDetect() {
                     </select>
 
                     </div>
-                    <p><button onClick={handleTranslate} className="buttonDetect col-1 btn btn-success">Translate</button></p>
+                    <p><button onClick={handleTranslate} className="buttonDetect col-md-1 col-3 btn btn-success">Translate</button></p>
 
                     {translated && paragraph.length > 0 &&
                         <div>
