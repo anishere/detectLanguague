@@ -1,0 +1,15 @@
+.layoutDetect-Wrap {
+  margin-top: 30px;
+  padding: 6px;
+  border: 1px solid green;
+  border-radius: 6px;
+}
+
+#textInput {
+  width: 600px;
+  height: 100px;
+}
+
+ul {
+  list-style: none;
+}
