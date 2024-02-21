@@ -1,11 +1,11 @@
 #root {
   background-size: cover;
-  height: 100vh;
+  min-height: 100vh;
   background-image: url("./assets/background.jpg");
 }
 
 .layoutDetect {
-  padding-top: 60px;
+  padding: 60px 0 30px;
 }
 
 .layoutDetect-Wrap {
@@ -21,4 +21,12 @@
 
 ul {
   list-style: none;
+}
+
+.textShadow {
+  text-shadow: 1px 0.25px grey;
+}
+
+h2 {
+  color: #0039ff !important;
 }

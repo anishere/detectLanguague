@@ -322,6 +322,7 @@ function layoutDetect() {
     return (
         <div className="layoutDetect">
             <div className="container-xxl">
+                <h2 className="text-center">Detect and Translate language</h2>
                 <div className="layoutDetect-Wrap p-3 text-center">
                     <textarea id="textInput" className="rounded col-12 col-md-8" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
                     <p><button onClick={handleDetect} className="buttonDetect col-md-1 col-3 btn btn-success">Detect</button></p>
@@ -329,12 +330,13 @@ function layoutDetect() {
                     <div className="col-12 row">
                     {/* Hiển thị kết quả detect ngôn ngữ */}
                     {languageResults.length > 0 &&
-                        <div className="col-md-6">
-                            <h2>Language Results</h2>
-                            <ul className="text-start">
+                        <div className="col-md-6 textShadow">
+                            <h2 className="text-success">Language Results</h2>
+                            <ul className="text-start text-white">
                                 {languageResults.map((result, index) => (
                                     <li key={index}>
-                                        <p><strong>Text:</strong> {result.text} | <strong>Detect:</strong> {getLanguageName(result.language)}</p>
+                                        <p><strong>Text:</strong> {result.text}</p>
+                                        <p><strong>Detect:</strong> {getLanguageName(result.language)}</p>
                                     </li>
                                 ))}
                             </ul>
@@ -342,9 +344,9 @@ function layoutDetect() {
                     }
 
                     {languagePercentages.length > 0 &&
-                        <div className="col-md-6">
-                            <h2>Language Percentages</h2>
-                            <ul className="">
+                        <div className="col-md-6 textShadow">
+                            <h2 className="text-success">Language Percentages</h2>
+                            <ul className="text-white">
                                 {languagePercentages.map((result, index) => (
                                     <li key={index}>
                                         <p><strong>{result.language}:</strong> {result.percentage.toFixed(2)}%</p>
@@ -475,9 +477,9 @@ function layoutDetect() {
                     <p><button onClick={handleTranslate} className="buttonDetect col-md-1 col-3 btn btn-success">Translate</button></p>
 
                     {translated && paragraph.length > 0 &&
-                        <div>
-                        <h2>Translated:</h2>
-                        <ul>
+                        <div className="textShadow">
+                        <h2 className="text-success">Translated</h2>
+                        <ul className="text-white text-start">
                             {paragraph.map((result, index) => (
                                 <li key={index}>
                                     <p><strong>Translate:</strong> {result}</p>
@@ -487,8 +489,6 @@ function layoutDetect() {
                         </ul>
                     </div>
                     }
-
-
 
                 </div>
             </div>
