@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useState } from "react";
 import axios from "axios";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { IoIosSwap } from "react-icons/io";
 
 function layoutDetect() {
     const [textInput, setTextInput] = useState();
@@ -9,12 +11,15 @@ function layoutDetect() {
     const [paragraph, setParagraph] = useState()
     const [targetLanguage, setTargetLanguage] = useState('vi');
     const [languagePercentages, setLanguagePercentages] = useState([]);
+    const [isLoadingDetect, setIsLoadingDetect] = useState(false);
+    const [isLoadingTrans, setIsLoadingTrans] = useState(false);
 
     const handleDetect = async () => {
+        setIsLoadingDetect(true);
         const textArray = textInput.split('.').filter(Boolean);
     
         const newLanguageResults = [];
-    
+        
         for (const text of textArray) {
             const options = {
                 method: 'POST',
@@ -58,10 +63,12 @@ function layoutDetect() {
         // Lưu kết quả vào state
         setLanguageResults(newLanguageResults);
         setLanguagePercentages(languagePercentages);
+        setIsLoadingDetect(false);
     }
     
 
     const handleTranslate = async () => {
+        setIsLoadingTrans(true);
         const textArray = textInput.split('.').filter(Boolean);
     
         const translatedTextArray = [];
@@ -84,8 +91,8 @@ function layoutDetect() {
     
             try {
                 const response = await axios.request(options);
-                paragraph.push(`Translated text for "${text}": ${response.data.translation}`)
-                console.log(`Translated text for "${text}":`, response.data.translation);
+                paragraph.push(`"${text}": ${response.data.translation}`)
+                console.log(`"${text}":`, response.data.translation);
     
                 translatedTextArray.push(response.data.translation);
             } catch (error) {
@@ -96,6 +103,7 @@ function layoutDetect() {
         // Cập nhật trạng thái với văn bản dịch
         setParagraph(paragraph)
         setTranslated(translatedTextArray.join('. '));
+        setIsLoadingTrans(false);
     }
 
     function getLanguageName(languageCode) {
@@ -319,19 +327,22 @@ function layoutDetect() {
         }
     }     
     
+    const handleSwap = () => setTextInput(translated)
+    
+
     return (
         <div className="layoutDetect">
             <div className="container-xxl">
                 <h2 className="text-center">Detect and Translate language</h2>
                 <div className="layoutDetect-Wrap p-3 text-center">
                     <textarea id="textInput" className="rounded col-12 col-md-8" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
-                    <p><button onClick={handleDetect} className="buttonDetect col-md-1 col-3 btn btn-success">Detect</button></p>
+                    <p><button onClick={handleDetect} className="buttonDetect col-md-1 col-3 btn btn-success">{isLoadingDetect ? <AiOutlineLoading3Quarters /> : 'Detect'}</button></p>
                     
                     <div className="col-12 row">
                     {/* Hiển thị kết quả detect ngôn ngữ */}
                     {languageResults.length > 0 &&
                         <div className="col-md-6 textShadow">
-                            <h2 className="text-success">Language Results</h2>
+                            <h2 className="">Language Results</h2>
                             <ul className="text-start text-white">
                                 {languageResults.map((result, index) => (
                                     <li key={index}>
@@ -345,7 +356,7 @@ function layoutDetect() {
 
                     {languagePercentages.length > 0 &&
                         <div className="col-md-6 textShadow">
-                            <h2 className="text-success">Language Percentages</h2>
+                            <h2 className="">Language Percentages</h2>
                             <ul className="text-white">
                                 {languagePercentages.map((result, index) => (
                                     <li key={index}>
@@ -474,11 +485,11 @@ function layoutDetect() {
                     </select>
 
                     </div>
-                    <p><button onClick={handleTranslate} className="buttonDetect col-md-1 col-3 btn btn-success">Translate</button></p>
+                    <p><button onClick={handleTranslate} className="buttonDetect col-md-1 col-3 btn btn-success">{isLoadingTrans ? <AiOutlineLoading3Quarters /> : 'Translate'}</button></p>
 
                     {translated && paragraph.length > 0 &&
                         <div className="textShadow">
-                        <h2 className="text-success">Translated</h2>
+                        <h2 className="">Translated</h2>
                         <ul className="text-white text-start">
                             {paragraph.map((result, index) => (
                                 <li key={index}>
@@ -486,6 +497,7 @@ function layoutDetect() {
                                 </li>
                             ))}
                             <p><strong>{translated}</strong></p>
+                            <p><button onClick={() => handleSwap()} className="btn btn-success"><IoIosSwap className="fs-4"/></button></p>
                         </ul>
                     </div>
                     }
