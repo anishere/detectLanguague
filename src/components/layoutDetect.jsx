@@ -1,8 +1,10 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoIosSwap } from "react-icons/io";
+
+import { createWorker } from 'tesseract.js';
 
 function layoutDetect() {
     const [textInput, setTextInput] = useState();
@@ -65,7 +67,6 @@ function layoutDetect() {
         setLanguagePercentages(languagePercentages);
         setIsLoadingDetect(false);
     }
-    
 
     const handleTranslate = async () => {
         setIsLoadingTrans(true);
@@ -328,7 +329,25 @@ function layoutDetect() {
     }     
     
     const handleSwap = () => setTextInput(translated)
-    
+
+    //Image input
+    const [selectImg, setSelectImg] = useState(null);
+    //const [lanSelect, setLanSelect] = useState()
+
+    const handleChangeImg = (e) => {
+        setSelectImg(e.target.files[0]);
+    }
+
+    const convertImgToText = async () => {
+        const worker = await createWorker(['eng', 'chi_sim', 'rus', 'fra', 'tha', 'vie', 'jpn']);
+        const ret = await worker.recognize(selectImg);
+        setTextInput(ret.data.text)
+        await worker.terminate();
+    }
+
+    useEffect(() => {
+        convertImgToText();
+    }, [selectImg])
 
     return (
         <div className="layoutDetect">
@@ -336,14 +355,21 @@ function layoutDetect() {
                 <h2 className="text-center">Detect and Translate language</h2>
                 <div className="layoutDetect-Wrap p-3 text-center">
                     <textarea id="textInput" className="rounded col-12 col-md-8" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
+                    <div className="mb-3">
+                        <label htmlFor="file" className="btn btn-primary">Choose your file</label>
+                        <input id="file" type="file" accept="image/*" onChange={(e)=>handleChangeImg(e)} />
+                    </div>
+                    {selectImg &&
+                        <div className="img-input col-10 mx-auto pb-3"><img className="pb-1" src={URL.createObjectURL(selectImg)} alt="" /></div> 
+                    }
                     <p><button onClick={handleDetect} className="buttonDetect col-md-1 col-3 btn btn-success">{isLoadingDetect ? <AiOutlineLoading3Quarters /> : 'Detect'}</button></p>
                     
-                    <div className="col-12 row">
+                    <div className="col-12 mx-auto row">
                     {/* Hiển thị kết quả detect ngôn ngữ */}
                     {languageResults.length > 0 &&
-                        <div className="col-md-6 textShadow">
+                        <div className="col-md-6 backgroundBox mx-auto">
                             <h2 className="">Language Results</h2>
-                            <ul className="text-start text-white">
+                            <ul className="text-start ">
                                 {languageResults.map((result, index) => (
                                     <li key={index}>
                                         <p><strong>Text:</strong> {result.text}</p>
@@ -355,9 +381,9 @@ function layoutDetect() {
                     }
 
                     {languagePercentages.length > 0 &&
-                        <div className="col-md-6 textShadow">
+                        <div className="col-md-6 backgroundBox mx-auto">
                             <h2 className="">Language Percentages</h2>
-                            <ul className="text-white">
+                            <ul className="">
                                 {languagePercentages.map((result, index) => (
                                     <li key={index}>
                                         <p><strong>{result.language}:</strong> {result.percentage.toFixed(2)}%</p>
@@ -488,17 +514,17 @@ function layoutDetect() {
                     <p><button onClick={handleTranslate} className="buttonDetect col-md-1 col-3 btn btn-success">{isLoadingTrans ? <AiOutlineLoading3Quarters /> : 'Translate'}</button></p>
 
                     {translated && paragraph.length > 0 &&
-                        <div className="textShadow">
+                        <div className="mx-auto">
                         <h2 className="">Translated</h2>
-                        <ul className="text-white text-start">
+                        <ul className="backgroundBox text-start">
                             {paragraph.map((result, index) => (
                                 <li key={index}>
-                                    <p><strong>Translate:</strong> {result}</p>
+                                    <p>{result}</p>
                                 </li>
                             ))}
-                            <p><strong>{translated}</strong></p>
-                            <p><button onClick={() => handleSwap()} className="btn btn-success"><IoIosSwap className="fs-4"/></button></p>
+                            <p><strong>All: </strong>{translated}</p>           
                         </ul>
+                        <p><button onClick={() => handleSwap()} className="btn btn-success"><IoIosSwap className="fs-4"/></button></p>
                     </div>
                     }
 
