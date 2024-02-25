@@ -59,3 +59,9 @@ h2 {
 #file {
   display: none;
 }
+
+.audio {
+  font-size: 2rem;
+  color: #0a58ca;
+  cursor: pointer;
+}

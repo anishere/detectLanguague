@@ -1,10 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoIosSwap } from "react-icons/io";
+import { Bars } from 'react-loading-icons'
+import { MdSpatialAudioOff } from "react-icons/md";
 
 import { createWorker } from 'tesseract.js';
+
+
 
 function layoutDetect() {
     const [textInput, setTextInput] = useState();
@@ -61,7 +64,7 @@ function layoutDetect() {
             language: lang,
             percentage: (count / totalLength) * 100
         }));
-    
+        
         // Lưu kết quả vào state
         setLanguageResults(newLanguageResults);
         setLanguagePercentages(languagePercentages);
@@ -349,20 +352,148 @@ function layoutDetect() {
         convertImgToText();
     }, [selectImg])
 
+    const readInput = async (textInput) => {
+        let languageCode;
+        const options = {
+            method: 'POST',
+            url: 'https://google-translate-v21.p.rapidapi.com/detect',
+            headers: {
+                'content-type': 'application/json',
+                'X-RapidAPI-Key': 'f27b6ab341msh0e7579f514266e6p1c84f2jsna514cbe9a80d',
+                'X-RapidAPI-Host': 'google-translate-v21.p.rapidapi.com'
+            },
+            data: {
+                text: `${textInput}`
+            }
+        };
+    
+        try {
+            const response = await axios.request(options);
+            languageCode = response.data.detected_language;
+            console.log("Detected language:", languageCode);
+        } catch (error) {
+            console.error("Error detecting language:", error);
+            return; // Exit function if language detection fails
+        }
+    
+        // Dynamically determine language code
+    
+        // Provide default voice if language not supported
+        const speech = new SpeechSynthesisUtterance(textInput);
+        let voiceName = '';
+        switch (languageCode) {
+            case 'de':
+                speech.lang = 'de-DE';
+                voiceName = 'Google Deutsch';
+                break;
+            case 'en':
+                speech.lang = 'en-US';
+                voiceName = 'Google US English';
+                break;
+            case 'es':
+                speech.lang = 'es-ES';
+                voiceName = 'Google español de Estados Unidos';
+                break;
+            case 'fr':
+                speech.lang = 'fr-FR';
+                voiceName = 'Google français';
+                break;
+            case 'hi':
+                speech.lang = 'hi-IN';
+                voiceName = 'Google हिन्दी';
+                break;
+            case 'id':
+                speech.lang = 'id-ID';
+                voiceName = 'Google Bahasa Indonesia';
+                break;
+            case 'it':
+                speech.lang = 'it-IT';
+                voiceName = 'Google italiano';
+                break;
+            case 'ja':
+                speech.lang = 'ja-JP';
+                voiceName = 'Google 日本語';
+                break;
+            case 'ko':
+                speech.lang = 'ko-KR';
+                voiceName = 'Google 한국의';
+                break;
+            case 'nl':
+                speech.lang = 'nl-NL';
+                voiceName = 'Google Nederlands';
+                break;
+            case 'pl':
+                speech.lang = 'pl-PL';
+                voiceName = 'Google polski';
+                break;
+            case 'pt':
+                speech.lang = 'pt-BR';
+                voiceName = 'Google português do Brasil';
+                break;
+            case 'ru':
+                speech.lang = 'ru-RU';
+                voiceName = 'Google русский';
+                break;
+            case 'zh-CN':
+                speech.lang = 'zh-CN';
+                voiceName = 'Google 普通话（中国大陆）';
+                break;
+            case 'zh-HK':
+                speech.lang = 'zh-HK';
+                voiceName = 'Google 粤語（香港）';
+                break;
+            case 'zh-TW':
+                speech.lang = 'zh-TW';
+                voiceName = 'Google 國語（臺灣）';
+                break;
+            case 'vi':
+                speech.lang = 'vi-VN';
+                voiceName = 'Google US English';
+                break;
+            default:
+                speech.lang = 'en-US';
+                voiceName = 'Google US English'; // Default voice
+                alert(`Language "${languageCode}" not supported. Using English.`);
+                break;
+        }
+    
+        // Find the voice by name
+        const voices = window.speechSynthesis.getVoices();
+        const selectedVoice = voices.find(voice => voice.name === voiceName);
+        if (selectedVoice) {
+            speech.voice = selectedVoice;
+        } else {
+            console.warn(`Voice "${voiceName}" not found. Using default voice.`);
+        }
+    
+        // Handle errors with more specific messages
+        try {
+            window.speechSynthesis.speak(speech);
+        } catch (error) {
+            if (error.name === 'NotFoundError') {
+                alert('Text-to-speech is not supported on your browser.');
+            } else {
+                console.error("Error reading text:", error);
+                alert("Text-to-speech failed. Please check your browser settings.");
+            }
+        }
+    }
+
     return (
         <div className="layoutDetect">
             <div className="container-xxl">
                 <h2 className="text-center">Detect and Translate language</h2>
                 <div className="layoutDetect-Wrap p-3 text-center">
                     <textarea id="textInput" className="rounded col-12 col-md-8" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
-                    <div className="mb-3">
+                    <div className="mb-3 d-flex justify-content-around">
+                        <span><MdSpatialAudioOff className="audio" onClick={() => readInput(textInput)} /></span>
                         <label htmlFor="file" className="btn btn-primary">Choose your file</label>
                         <input id="file" type="file" accept="image/*" onChange={(e)=>handleChangeImg(e)} />
                     </div>
                     {selectImg &&
                         <div className="img-input col-10 mx-auto pb-3"><img className="pb-1" src={URL.createObjectURL(selectImg)} alt="" /></div> 
                     }
-                    <p><button onClick={handleDetect} className="buttonDetect col-md-1 col-3 btn btn-success">{isLoadingDetect ? <AiOutlineLoading3Quarters /> : 'Detect'}</button></p>
+                    <p>{isLoadingDetect ? <Bars /> : <button onClick={handleDetect} className="buttonDetect col-md-1 col-3 btn btn-success">Detect</button>}</p>
                     
                     <div className="col-12 mx-auto row">
                     {/* Hiển thị kết quả detect ngôn ngữ */}
@@ -511,7 +642,7 @@ function layoutDetect() {
                     </select>
 
                     </div>
-                    <p><button onClick={handleTranslate} className="buttonDetect col-md-1 col-3 btn btn-success">{isLoadingTrans ? <AiOutlineLoading3Quarters /> : 'Translate'}</button></p>
+                    <p>{isLoadingTrans ? <Bars /> : <button onClick={handleTranslate} className="buttonDetect col-md-1 col-3 btn btn-success">Translate</button>}</p>
 
                     {translated && paragraph.length > 0 &&
                         <div className="mx-auto">
