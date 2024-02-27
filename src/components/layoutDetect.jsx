@@ -482,11 +482,11 @@ function layoutDetect() {
     return (
         <div className="layoutDetect">
             <div className="container-xxl">
-                <h2 className="text-center">Detect and Translate language</h2>
+                <h2 className="textShadow text-center text-primary">Detect and Translate language</h2>
                 <div className="layoutDetect-Wrap p-3 text-center">
                     <textarea id="textInput" className="rounded col-12 col-md-8" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
                     <div className="mb-3 d-flex justify-content-around">
-                        <span><MdSpatialAudioOff className="audio" onClick={() => readInput(textInput)} /></span>
+                        <span><button className="btn btn-primary"><MdSpatialAudioOff className="audio" onClick={() => readInput(textInput)} /></button></span>
                         <label htmlFor="file" className="btn btn-primary">Choose your photo</label>
                         <input id="file" type="file" accept="image/*" onChange={(e)=>handleChangeImg(e)} />
                     </div>
@@ -646,7 +646,7 @@ function layoutDetect() {
 
                     {translated && paragraph.length > 0 &&
                         <div className="mx-auto">
-                        <h2 className="">Translated</h2>
+                        <h2 className="text-white textShadow">Translated</h2>
                         <ul className="backgroundBox text-start">
                             {paragraph.map((result, index) => (
                                 <li key={index}>

@@ -19,8 +19,9 @@
 
 .layoutDetect-Wrap {
   padding: 6px;
-  border: 3px solid #000a8b;
+  border: 3px solid #2caa11;
   border-radius: 6px;
+  box-shadow: 0px 0px 6px 3px #0a1507;
 }
 
 #textInput {
@@ -36,10 +37,11 @@ ul {
   text-shadow: 1px 0.25px grey;
 }
 
-h2 {
-  background: -webkit-linear-gradient(#ff0039, #6200ff);
+h2.textShadow {
+  text-shadow: 1px 2px 1px black;
+  /* background: -webkit-linear-gradient(#f9ff00, #1eff00);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: transparent; */
 }
 
 .img-input img {
@@ -62,6 +64,6 @@ h2 {
 
 .audio {
   font-size: 2rem;
-  color: #0a58ca;
+  color: white;
   cursor: pointer;
 }
