@@ -7,7 +7,7 @@ import { MdSpatialAudioOff } from "react-icons/md";
 
 import { createWorker } from 'tesseract.js';
 
-
+import { APIKeys } from "./APIKey";
 
 function layoutDetect() {
     const [textInput, setTextInput] = useState();
@@ -21,7 +21,7 @@ function layoutDetect() {
 
     const handleDetect = async () => {
         setIsLoadingDetect(true);
-        const textArray = textInput.split('.').filter(Boolean);
+        const textArray = textInput.split(/[.,:;]/).filter(Boolean);
     
         const newLanguageResults = [];
         
@@ -31,7 +31,7 @@ function layoutDetect() {
                 url: 'https://google-translate-v21.p.rapidapi.com/detect',
                 headers: {
                     'content-type': 'application/json',
-                    'X-RapidAPI-Key': 'f27b6ab341msh0e7579f514266e6p1c84f2jsna514cbe9a80d',
+                    'X-RapidAPI-Key': APIKeys,
                     'X-RapidAPI-Host': 'google-translate-v21.p.rapidapi.com'
                 },
                 data: {
@@ -73,7 +73,7 @@ function layoutDetect() {
 
     const handleTranslate = async () => {
         setIsLoadingTrans(true);
-        const textArray = textInput.split('.').filter(Boolean);
+        const textArray = textInput.split(/[.,:;]/).filter(Boolean);
     
         const translatedTextArray = [];
         const paragraph = [];
@@ -84,7 +84,7 @@ function layoutDetect() {
                 url: 'https://google-translate-v21.p.rapidapi.com/translate',
                 headers: {
                     'content-type': 'application/json',
-                    'X-RapidAPI-Key': 'f27b6ab341msh0e7579f514266e6p1c84f2jsna514cbe9a80d',
+                    'X-RapidAPI-Key': APIKeys,
                     'X-RapidAPI-Host': 'google-translate-v21.p.rapidapi.com'
                 },
                 data: {
@@ -359,7 +359,7 @@ function layoutDetect() {
             url: 'https://google-translate-v21.p.rapidapi.com/detect',
             headers: {
                 'content-type': 'application/json',
-                'X-RapidAPI-Key': 'f27b6ab341msh0e7579f514266e6p1c84f2jsna514cbe9a80d',
+                'X-RapidAPI-Key': APIKeys,
                 'X-RapidAPI-Host': 'google-translate-v21.p.rapidapi.com'
             },
             data: {
@@ -487,7 +487,7 @@ function layoutDetect() {
                     <textarea id="textInput" className="rounded col-12 col-md-8" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
                     <div className="mb-3 d-flex justify-content-around">
                         <span><MdSpatialAudioOff className="audio" onClick={() => readInput(textInput)} /></span>
-                        <label htmlFor="file" className="btn btn-primary">Choose your file</label>
+                        <label htmlFor="file" className="btn btn-primary">Choose your photo</label>
                         <input id="file" type="file" accept="image/*" onChange={(e)=>handleChangeImg(e)} />
                     </div>
                     {selectImg &&
