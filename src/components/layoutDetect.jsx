@@ -105,7 +105,7 @@ function layoutDetect() {
         }
     
         // Cập nhật trạng thái với văn bản dịch
-        setParagraph(paragraph)
+        //setParagraph(paragraph)
         setTranslated(translatedTextArray.join('. '));
         setIsLoadingTrans(false);
     }
