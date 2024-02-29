@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { IoIosSwap } from "react-icons/io";
-import { Bars } from 'react-loading-icons'
-import { MdSpatialAudioOff } from "react-icons/md";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { HiOutlineSpeakerWave } from "react-icons/hi2";
 
 import { createWorker } from 'tesseract.js';
 
@@ -13,7 +13,7 @@ function layoutDetect() {
     const [textInput, setTextInput] = useState();
     const [languageResults, setLanguageResults] = useState([]);
     const [translated, setTranslated] = useState();
-    const [paragraph, setParagraph] = useState()
+    //const [paragraph, setParagraph] = useState()
     const [targetLanguage, setTargetLanguage] = useState('vi');
     const [languagePercentages, setLanguagePercentages] = useState([]);
     const [isLoadingDetect, setIsLoadingDetect] = useState(false);
@@ -482,50 +482,12 @@ function layoutDetect() {
     return (
         <div className="layoutDetect">
             <div className="container-xxl">
-                <h2 className="textShadow text-center text-primary">Detect and Translate language</h2>
-                <div className="layoutDetect-Wrap p-3 text-center">
-                    <textarea id="textInput" className="rounded col-12 col-md-8" onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate"></textarea>
-                    <div className="mb-3 d-flex justify-content-around">
-                        <span><button className="btn btn-primary"><MdSpatialAudioOff className="audio" onClick={() => readInput(textInput)} /></button></span>
+                <div className="row wrap">
+                    <span className="tool">
                         <label htmlFor="file" className="btn btn-primary">Choose your photo</label>
                         <input id="file" type="file" accept="image/*" onChange={(e)=>handleChangeImg(e)} />
-                    </div>
-                    {selectImg &&
-                        <div className="img-input col-10 mx-auto pb-3"><img className="pb-1" src={URL.createObjectURL(selectImg)} alt="" /></div> 
-                    }
-                    <p>{isLoadingDetect ? <Bars /> : <button onClick={handleDetect} className="buttonDetect col-md-1 col-3 btn btn-success">Detect</button>}</p>
-                    
-                    <div className="col-12 mx-auto row">
-                    {/* Hiển thị kết quả detect ngôn ngữ */}
-                    {languageResults.length > 0 &&
-                        <div className="col-md-6 backgroundBox mx-auto">
-                            <h2 className="">Language Results</h2>
-                            <ul className="text-start ">
-                                {languageResults.map((result, index) => (
-                                    <li key={index}>
-                                        <p><strong>Text:</strong> {result.text}</p>
-                                        <p><strong>Detect:</strong> {getLanguageName(result.language)}</p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    }
-
-                    {languagePercentages.length > 0 &&
-                        <div className="col-md-6 backgroundBox mx-auto">
-                            <h2 className="">Language Percentages</h2>
-                            <ul className="">
-                                {languagePercentages.map((result, index) => (
-                                    <li key={index}>
-                                        <p><strong>{result.language}:</strong> {result.percentage.toFixed(2)}%</p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    }
-                    </div>
-
-                    <div className="col-md-3 mb-2 mx-auto">
+                    </span>
+                    <p className="col-md-12 text-center swap-icon"><button onClick={() => handleSwap()} className="btn btn-success"><IoIosSwap className="fs-4"/></button></p>
                     <select
                         className="form-select"
                         aria-label="Default select example"
@@ -640,11 +602,51 @@ function layoutDetect() {
                         <option value="zh-tw">Chinese (Traditional)</option>
                         <option value="zu">Zulu</option>
                     </select>
-
+                    <textarea onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate" className="text-input" id=""></textarea>
+                    <div className="mx-0 text-output" id="">{translated}</div>
+                    <i className="icon-speaker" onClick={() => readInput(textInput)} ><HiOutlineSpeakerWave /></i>
+                    <div className="mt-2 p-0">
+                    <span><button onClick={handleDetect} className="buttonDetect fs-6 col-md-1 col-3 btn btn-success">{isLoadingDetect ? <AiOutlineLoading3Quarters /> : 'Detect'}</button></span>
+                    <span className="mx-2"><button onClick={handleTranslate} className="buttonDetect col-md-1 fs-6 col-3 btn btn-success">{isLoadingTrans ? <AiOutlineLoading3Quarters /> : 'Translate'}</button></span>
                     </div>
-                    <p>{isLoadingTrans ? <Bars /> : <button onClick={handleTranslate} className="buttonDetect col-md-1 col-3 btn btn-success">Translate</button>}</p>
+                </div>
+                <hr />
+                <div>
+                    {selectImg &&
+                        <div className="img-input col-10 mx-auto pb-3"><img className="pb-1" src={URL.createObjectURL(selectImg)} alt="" /></div> 
+                    }
 
-                    {translated && paragraph.length > 0 &&
+                    <div className="wrap-detect">
+                    {/* Hiển thị kết quả detect ngôn ngữ */}
+                    {languageResults.length > 0 &&
+                        <div className="col-md-6 p-3 backgroundBox mx-auto">
+                            <h2 className="">Language Results</h2>
+                            <ul className="text-start ">
+                                {languageResults.map((result, index) => (
+                                    <li key={index}>
+                                        <p><strong>Text:</strong> {result.text}</p>
+                                        <p><strong>Detect:</strong> {getLanguageName(result.language)}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    }
+
+                    {languagePercentages.length > 0 &&
+                        <div className="col-md-6 p-3 backgroundBox mx-auto">
+                            <h2 className="">Language Percentages</h2>
+                            <ul className="">
+                                {languagePercentages.map((result, index) => (
+                                    <li key={index}>
+                                        <p><strong>{result.language}:</strong> {result.percentage.toFixed(2)}%</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    }
+                    </div>
+
+                    {/* {translated && paragraph.length > 0 &&
                         <div className="mx-auto">
                         <h2 className="text-white textShadow">Translated</h2>
                         <ul className="backgroundBox text-start">
@@ -656,10 +658,10 @@ function layoutDetect() {
                             <p><strong>All: </strong>{translated}</p>           
                         </ul>
                         <p><button onClick={() => handleSwap()} className="btn btn-success"><IoIosSwap className="fs-4"/></button></p>
-                    </div>
-                    }
-
+                        </div>
+                    } */}
                 </div>
+                    
             </div>
         </div>
     );

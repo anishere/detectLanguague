@@ -4,6 +4,10 @@
   //background-image: url("./assets/background.jpg");
 }
 
+* {
+  box-sizing: border-box;
+}
+
 #myVideo {
   position: fixed;
   right: 0;
@@ -66,4 +70,58 @@ h2.textShadow {
   font-size: 2rem;
   color: white;
   cursor: pointer;
+}
+
+.text-input,
+.text-output {
+  width: 49% !important;
+  border-radius: 6px;
+  min-height: 150px;
+  border: 1px solid rgb(0 0 0 / 12%);
+  padding: 18px 0;
+}
+
+.wrap {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.swap-icon {
+  /* top: -46px;
+  left: 46.7%;
+  position: absolute; */
+  padding: 0;
+  margin: 0 0 6px;
+}
+
+.form-select {
+  position: absolute;
+  top: 0px;
+  right: 37%;
+  width: 10% !important;
+}
+
+.icon-speaker {
+  position: absolute;
+  bottom: 23%;
+  font-size: 1.4rem;
+  cursor: pointer;
+  width: 50px !important;
+  padding: 6px !important;
+  border-radius: 100%;
+  text-align: center;
+}
+
+.icon-speaker:hover {
+  background-color: #f5f5f5;
+}
+
+.tool {
+  padding: 0 !important;
+  position: absolute;
+}
+
+.wrap-detect {
+  display: flex;
 }
