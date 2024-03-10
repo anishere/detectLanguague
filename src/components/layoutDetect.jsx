@@ -586,6 +586,8 @@ function layoutDetect() {
         { code: 'zu-ZA', name: 'Zulu (South Africa)' }
     ];
 
+    //const [isRecording, setIsRecording] = useState(false);
+
     // Function to handle Speech-to-Text conversion
     const handleSpeechToText = () => {
         const recognition = new window.webkitSpeechRecognition() || window.SpeechRecognition();
@@ -600,7 +602,7 @@ function layoutDetect() {
             console.error('Speech recognition error:', event.error);
         };
 
-        recognition.start(); // Start speech recognition
+        recognition.start(); // Start speech recognition  
     };
 
     useEffect(() => {
@@ -608,7 +610,7 @@ function layoutDetect() {
         window.speechSynthesis.onvoiceschanged = () => {
             const voices = window.speechSynthesis.getVoices();
             console.log(voices);
-        };
+        };      
     }, []);
 
     return (
@@ -751,6 +753,7 @@ function layoutDetect() {
                     <div className="mx-0 text-output" id="">{translated}</div>
                     <i className="icon-micro" onClick={handleSpeechToText}><HiOutlineMicrophone /></i>
                     <i className="icon-speaker" onClick={() => readInput(textInput)} ><HiOutlineSpeakerWave /></i>
+                    <i className="icon-speaker-output" onClick={() => readInput(translated)} ><HiOutlineSpeakerWave /></i>
                     <div className="mt-2 p-0">
                     <span><button onClick={handleDetect} className="buttonDetect fs-6 col-md-1 col-3 btn btn-success">{isLoadingDetect ? <AiOutlineLoading3Quarters /> : 'Detect'}</button></span>
                     <span className="mx-2"><button onClick={handleTranslate} className="buttonDetect col-md-1 fs-6 col-3 btn btn-success">{isLoadingTrans ? <AiOutlineLoading3Quarters /> : 'Translate'}</button></span>
