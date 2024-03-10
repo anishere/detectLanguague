@@ -4,6 +4,8 @@ import axios from "axios";
 import { IoIosSwap } from "react-icons/io";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { HiOutlineSpeakerWave } from "react-icons/hi2";
+import { MdInsertPhoto } from "react-icons/md";
+import { HiOutlineMicrophone } from "react-icons/hi2";
 
 import { createWorker } from 'tesseract.js';
 
@@ -18,6 +20,8 @@ function layoutDetect() {
     const [languagePercentages, setLanguagePercentages] = useState([]);
     const [isLoadingDetect, setIsLoadingDetect] = useState(false);
     const [isLoadingTrans, setIsLoadingTrans] = useState(false);
+
+    const [speechRecognitionLang, setSpeechRecognitionLang] = useState('en-US'); // Default language
 
     const handleDetect = async () => {
         setIsLoadingDetect(true);
@@ -479,131 +483,273 @@ function layoutDetect() {
         }
     }
 
+    const languages = [
+        { code: 'af-ZA', name: 'Afrikaans (South Africa)' },
+        { code: 'am-ET', name: 'Amharic (Ethiopia)' },
+        { code: 'hy-AM', name: 'Armenian (Armenia)' },
+        { code: 'az-AZ', name: 'Azerbaijani (Azerbaijan)' },
+        { code: 'id-ID', name: 'Indonesian (Indonesia)' },
+        { code: 'ms-MY', name: 'Malay (Malaysia)' },
+        { code: 'bn-BD', name: 'Bengali (Bangladesh)' },
+        { code: 'bn-IN', name: 'Bengali (India)' },
+        { code: 'ca-ES', name: 'Catalan (Spain)' },
+        { code: 'cs-CZ', name: 'Czech (Czech Republic)' },
+        { code: 'da-DK', name: 'Danish (Denmark)' },
+        { code: 'de-DE', name: 'German (Germany)' },
+        { code: 'en-AU', name: 'English (Australia)' },
+        { code: 'en-CA', name: 'English (Canada)' },
+        { code: 'en-GH', name: 'English (Ghana)' },
+        { code: 'en-GB', name: 'English (United Kingdom)' },
+        { code: 'en-IN', name: 'English (India)' },
+        { code: 'en-IE', name: 'English (Ireland)' },
+        { code: 'en-KE', name: 'English (Kenya)' },
+        { code: 'en-NZ', name: 'English (New Zealand)' },
+        { code: 'en-NG', name: 'English (Nigeria)' },
+        { code: 'en-PH', name: 'English (Philippines)' },
+        { code: 'en-ZA', name: 'English (South Africa)' },
+        { code: 'en-TZ', name: 'English (Tanzania)' },
+        { code: 'en-US', name: 'English (United States)' },
+        { code: 'es-AR', name: 'Spanish (Argentina)' },
+        { code: 'es-BO', name: 'Spanish (Bolivia)' },
+        { code: 'es-CL', name: 'Spanish (Chile)' },
+        { code: 'es-CO', name: 'Spanish (Colombia)' },
+        { code: 'es-CR', name: 'Spanish (Costa Rica)' },
+        { code: 'es-EC', name: 'Spanish (Ecuador)' },
+        { code: 'es-SV', name: 'Spanish (El Salvador)' },
+        { code: 'es-ES', name: 'Spanish (Spain)' },
+        { code: 'es-US', name: 'Spanish (United States)' },
+        { code: 'es-GT', name: 'Spanish (Guatemala)' },
+        { code: 'es-HN', name: 'Spanish (Honduras)' },
+        { code: 'es-MX', name: 'Spanish (Mexico)' },
+        { code: 'es-NI', name: 'Spanish (Nicaragua)' },
+        { code: 'es-PA', name: 'Spanish (Panama)' },
+        { code: 'es-PY', name: 'Spanish (Paraguay)' },
+        { code: 'es-PE', name: 'Spanish (Peru)' },
+        { code: 'es-PR', name: 'Spanish (Puerto Rico)' },
+        { code: 'es-DO', name: 'Spanish (Dominican Republic)' },
+        { code: 'es-UY', name: 'Spanish (Uruguay)' },
+        { code: 'es-VE', name: 'Spanish (Venezuela)' },
+        { code: 'eu-ES', name: 'Basque (Spain)' },
+        { code: 'fil-PH', name: 'Filipino (Philippines)' },
+        { code: 'fr-CA', name: 'French (Canada)' },
+        { code: 'fr-FR', name: 'French (France)' },
+        { code: 'gl-ES', name: 'Galician (Spain)' },
+        { code: 'ka-GE', name: 'Georgian (Georgia)' },
+        { code: 'gu-IN', name: 'Gujarati (India)' },
+        { code: 'hr-HR', name: 'Croatian (Croatia)' },
+        { code: 'zu-ZA', name: 'Zulu (South Africa)' },
+        { code: 'is-IS', name: 'Icelandic (Iceland)' },
+        { code: 'it-IT', name: 'Italian (Italy)' },
+        { code: 'jv-ID', name: 'Javanese (Indonesia)' },
+        { code: 'kn-IN', name: 'Kannada (India)' },
+        { code: 'km-KH', name: 'Khmer (Cambodia)' },
+        { code: 'lo-LA', name: 'Lao (Laos)' },
+        { code: 'lv-LV', name: 'Latvian (Latvia)' },
+        { code: 'lt-LT', name: 'Lithuanian (Lithuania)' },
+        { code: 'hu-HU', name: 'Hungarian (Hungary)' },
+        { code: 'ml-IN', name: 'Malayalam (India)' },
+        { code: 'mr-IN', name: 'Marathi (India)' },
+        { code: 'nl-NL', name: 'Dutch (Netherlands)' },
+        { code: 'ne-NP', name: 'Nepali (Nepal)' },
+        { code: 'no-NO', name: 'Norwegian (Norway)' },
+        { code: 'pl-PL', name: 'Polish (Poland)' },
+        { code: 'pt-BR', name: 'Portuguese (Brazil)' },
+        { code: 'pt-PT', name: 'Portuguese (Portugal)' },
+        { code: 'pa-IN', name: 'Punjabi (India)' },
+        { code: 'ro-RO', name: 'Romanian (Romania)' },
+        { code: 'ru-RU', name: 'Russian (Russia)' },
+        { code: 'sr-RS', name: 'Serbian (Serbia)' },
+        { code: 'si-LK', name: 'Sinhala (Sri Lanka)' },
+        { code: 'sk-SK', name: 'Slovak (Slovakia)' },
+        { code: 'sl-SI', name: 'Slovenian (Slovenia)' },
+        { code: 'su-ID', name: 'Sundanese (Indonesia)' },
+        { code: 'sw-TZ', name: 'Swahili (Tanzania)' },
+        { code: 'sw-KE', name: 'Swahili (Kenya)' },
+        { code: 'fi-FI', name: 'Finnish (Finland)' },
+        { code: 'sv-SE', name: 'Swedish (Sweden)' },
+        { code: 'ta-IN', name: 'Tamil (India)' },
+        { code: 'ta-SG', name: 'Tamil (Singapore)' },
+        { code: 'ta-LK', name: 'Tamil (Sri Lanka)' },
+        { code: 'ta-MY', name: 'Tamil (Malaysia)' },
+        { code: 'te-IN', name: 'Telugu (India)' },
+        { code: 'th-TH', name: 'Thai (Thailand)' },
+        { code: 'tr-TR', name: 'Turkish (Turkey)' },
+        { code: 'uk-UA', name: 'Ukrainian (Ukraine)' },
+        { code: 'ur-PK', name: 'Urdu (Pakistan)' },
+        { code: 'ur-IN', name: 'Urdu (India)' },
+        { code: 'uz-UZ', name: 'Uzbek (Uzbekistan)' },
+        { code: 'vi-VN', name: 'Vietnamese (Vietnam)' },
+        { code: 'cy-GB', name: 'Welsh (United Kingdom)' },
+        { code: 'xh-ZA', name: 'Xhosa (South Africa)' },
+        { code: 'yi-DE', name: 'Yiddish (Germany)' },
+        { code: 'yo-NG', name: 'Yoruba (Nigeria)' },
+        { code: 'zu-ZA', name: 'Zulu (South Africa)' }
+    ];
+
+    // Function to handle Speech-to-Text conversion
+    const handleSpeechToText = () => {
+        const recognition = new window.webkitSpeechRecognition() || window.SpeechRecognition();
+        recognition.lang = speechRecognitionLang; // Set language for speech recognition
+
+        recognition.onresult = (event) => {
+            const speechToText = event.results[0][0].transcript;
+            setTextInput(speechToText); // Set the recognized text to input field
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+        };
+
+        recognition.start(); // Start speech recognition
+    };
+
+    useEffect(() => {
+        // Load voices when component mounts
+        window.speechSynthesis.onvoiceschanged = () => {
+            const voices = window.speechSynthesis.getVoices();
+            console.log(voices);
+        };
+    }, []);
+
     return (
         <div className="layoutDetect">
             <div className="container-xxl">
+                <h2 className="text-center mb-4">Detect & Translate</h2>
                 <div className="row wrap">
                     <span className="tool">
-                        <label htmlFor="file" className="btn btn-primary">Choose your photo</label>
+                        <label htmlFor="file" className="btn btn-primary "><MdInsertPhoto className="fs-4" /> Photo</label>
                         <input id="file" type="file" accept="image/*" onChange={(e)=>handleChangeImg(e)} />
                     </span>
-                    <p className="col-md-12 text-center swap-icon"><button onClick={() => handleSwap()} className="btn btn-success"><IoIosSwap className="fs-4"/></button></p>
-                    <select
-                        className="form-select"
-                        aria-label="Default select example"
-                        value={targetLanguage} 
-                        onChange={(e) => setTargetLanguage(e.target.value)}
-                    >
-                        <option value="en">English</option>
-                        <option value="af">Afrikaans</option>
-                        <option value="am">Amharic</option>
-                        <option value="ar">Arabic</option>
-                        <option value="az">Azerbaijani</option>
-                        <option value="be">Belarusian</option>
-                        <option value="bg">Bulgarian</option>
-                        <option value="bn">Bengali</option>
-                        <option value="bs">Bosnian</option>
-                        <option value="ca">Catalan</option>
-                        <option value="ceb">Cebuano</option>
-                        <option value="co">Corsican</option>
-                        <option value="cs">Czech</option>
-                        <option value="cy">Welsh</option>
-                        <option value="da">Danish</option>
-                        <option value="de">German</option>
-                        <option value="el">Greek</option>
-                        <option value="eo">Esperanto</option>
-                        <option value="es">Spanish</option>
-                        <option value="et">Estonian</option>
-                        <option value="eu">Basque</option>
-                        <option value="fa">Persian</option>
-                        <option value="fi">Finnish</option>
-                        <option value="fr">French</option>
-                        <option value="fy">Frisian</option>
-                        <option value="ga">Irish</option>
-                        <option value="gd">Scots Gaelic</option>
-                        <option value="gl">Galician</option>
-                        <option value="gu">Gujarati</option>
-                        <option value="ha">Hausa</option>
-                        <option value="haw">Hawaiian</option>
-                        <option value="he">Hebrew</option>
-                        <option value="hi">Hindi</option>
-                        <option value="hmn">Hmong</option>
-                        <option value="hr">Croatian</option>
-                        <option value="ht">Haitian Creole</option>
-                        <option value="hu">Hungarian</option>
-                        <option value="hy">Armenian</option>
-                        <option value="id">Indonesian</option>
-                        <option value="ig">Igbo</option>
-                        <option value="is">Icelandic</option>
-                        <option value="it">Italian</option>
-                        <option value="iw">Hebrew</option>
-                        <option value="ja">Japanese</option>
-                        <option value="jw">Javanese</option>
-                        <option value="ka">Georgian</option>
-                        <option value="kk">Kazakh</option>
-                        <option value="km">Khmer</option>
-                        <option value="kn">Kannada</option>
-                        <option value="ko">Korean</option>
-                        <option value="ku">Kurdish (Kurmanji)</option>
-                        <option value="ky">Kyrgyz</option>
-                        <option value="la">Latin</option>
-                        <option value="lb">Luxembourgish</option>
-                        <option value="lo">Lao</option>
-                        <option value="lt">Lithuanian</option>
-                        <option value="lv">Latvian</option>
-                        <option value="mg">Malagasy</option>
-                        <option value="mi">Maori</option>
-                        <option value="mk">Macedonian</option>
-                        <option value="ml">Malayalam</option>
-                        <option value="mn">Mongolian</option>
-                        <option value="mr">Marathi</option>
-                        <option value="ms">Malay</option>
-                        <option value="mt">Maltese</option>
-                        <option value="my">Myanmar (Burmese)</option>
-                        <option value="ne">Nepali</option>
-                        <option value="nl">Dutch</option>
-                        <option value="no">Norwegian</option>
-                        <option value="ny">Chichewa</option>
-                        <option value="or">Odia</option>
-                        <option value="pa">Punjabi</option>
-                        <option value="pl">Polish</option>
-                        <option value="ps">Pashto</option>
-                        <option value="pt">Portuguese</option>
-                        <option value="ro">Romanian</option>
-                        <option value="ru">Russian</option>
-                        <option value="sd">Sindhi</option>
-                        <option value="si">Sinhala</option>
-                        <option value="sk">Slovak</option>
-                        <option value="sl">Slovenian</option>
-                        <option value="sm">Samoan</option>
-                        <option value="sn">Shona</option>
-                        <option value="so">Somali</option>
-                        <option value="sq">Albanian</option>
-                        <option value="sr">Serbian</option>
-                        <option value="st">Sesotho</option>
-                        <option value="su">Sundanese</option>
-                        <option value="sv">Swedish</option>
-                        <option value="sw">Swahili</option>
-                        <option value="ta">Tamil</option>
-                        <option value="te">Telugu</option>
-                        <option value="tg">Tajik</option>
-                        <option value="th">Thai</option>
-                        <option value="tl">Filipino</option>
-                        <option value="tr">Turkish</option>
-                        <option value="ug">Uyghur</option>
-                        <option value="uk">Ukrainian</option>
-                        <option value="ur">Urdu</option>
-                        <option value="uz">Uzbek</option>
-                        <option value="vi">Vietnamese</option>
-                        <option value="xh">Xhosa</option>
-                        <option value="yi">Yiddish</option>
-                        <option value="yo">Yoruba</option>
-                        <option value="zh-cn">Chinese (Simplified)</option>
-                        <option value="zh-tw">Chinese (Traditional)</option>
-                        <option value="zu">Zulu</option>
-                    </select>
+                    <div className="area-select">
+                        <select
+                            className="form-select form-select-micro"
+                            aria-label="Select recognition language"
+                            value={speechRecognitionLang}
+                            onChange={(e) => setSpeechRecognitionLang(e.target.value)}
+                        >
+                            {languages.map((language, index) => (
+                                <option key={index} value={language.code}>{language.name}</option>
+                            ))}
+                        </select>
+                        <p className="col-md-12 text-center swap-icon"><button onClick={() => handleSwap()} className="btn btn-success"><IoIosSwap className="fs-4"/></button></p>
+                        <select
+                            className="form-select form-select-output"
+                            aria-label="Default select example"
+                            value={targetLanguage} 
+                            onChange={(e) => setTargetLanguage(e.target.value)}
+                        >
+                            <option value="en">English</option>
+                            <option value="af">Afrikaans</option>
+                            <option value="am">Amharic</option>
+                            <option value="ar">Arabic</option>
+                            <option value="az">Azerbaijani</option>
+                            <option value="be">Belarusian</option>
+                            <option value="bg">Bulgarian</option>
+                            <option value="bn">Bengali</option>
+                            <option value="bs">Bosnian</option>
+                            <option value="ca">Catalan</option>
+                            <option value="ceb">Cebuano</option>
+                            <option value="co">Corsican</option>
+                            <option value="cs">Czech</option>
+                            <option value="cy">Welsh</option>
+                            <option value="da">Danish</option>
+                            <option value="de">German</option>
+                            <option value="el">Greek</option>
+                            <option value="eo">Esperanto</option>
+                            <option value="es">Spanish</option>
+                            <option value="et">Estonian</option>
+                            <option value="eu">Basque</option>
+                            <option value="fa">Persian</option>
+                            <option value="fi">Finnish</option>
+                            <option value="fr">French</option>
+                            <option value="fy">Frisian</option>
+                            <option value="ga">Irish</option>
+                            <option value="gd">Scots Gaelic</option>
+                            <option value="gl">Galician</option>
+                            <option value="gu">Gujarati</option>
+                            <option value="ha">Hausa</option>
+                            <option value="haw">Hawaiian</option>
+                            <option value="he">Hebrew</option>
+                            <option value="hi">Hindi</option>
+                            <option value="hmn">Hmong</option>
+                            <option value="hr">Croatian</option>
+                            <option value="ht">Haitian Creole</option>
+                            <option value="hu">Hungarian</option>
+                            <option value="hy">Armenian</option>
+                            <option value="id">Indonesian</option>
+                            <option value="ig">Igbo</option>
+                            <option value="is">Icelandic</option>
+                            <option value="it">Italian</option>
+                            <option value="iw">Hebrew</option>
+                            <option value="ja">Japanese</option>
+                            <option value="jw">Javanese</option>
+                            <option value="ka">Georgian</option>
+                            <option value="kk">Kazakh</option>
+                            <option value="km">Khmer</option>
+                            <option value="kn">Kannada</option>
+                            <option value="ko">Korean</option>
+                            <option value="ku">Kurdish (Kurmanji)</option>
+                            <option value="ky">Kyrgyz</option>
+                            <option value="la">Latin</option>
+                            <option value="lb">Luxembourgish</option>
+                            <option value="lo">Lao</option>
+                            <option value="lt">Lithuanian</option>
+                            <option value="lv">Latvian</option>
+                            <option value="mg">Malagasy</option>
+                            <option value="mi">Maori</option>
+                            <option value="mk">Macedonian</option>
+                            <option value="ml">Malayalam</option>
+                            <option value="mn">Mongolian</option>
+                            <option value="mr">Marathi</option>
+                            <option value="ms">Malay</option>
+                            <option value="mt">Maltese</option>
+                            <option value="my">Myanmar (Burmese)</option>
+                            <option value="ne">Nepali</option>
+                            <option value="nl">Dutch</option>
+                            <option value="no">Norwegian</option>
+                            <option value="ny">Chichewa</option>
+                            <option value="or">Odia</option>
+                            <option value="pa">Punjabi</option>
+                            <option value="pl">Polish</option>
+                            <option value="ps">Pashto</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="ro">Romanian</option>
+                            <option value="ru">Russian</option>
+                            <option value="sd">Sindhi</option>
+                            <option value="si">Sinhala</option>
+                            <option value="sk">Slovak</option>
+                            <option value="sl">Slovenian</option>
+                            <option value="sm">Samoan</option>
+                            <option value="sn">Shona</option>
+                            <option value="so">Somali</option>
+                            <option value="sq">Albanian</option>
+                            <option value="sr">Serbian</option>
+                            <option value="st">Sesotho</option>
+                            <option value="su">Sundanese</option>
+                            <option value="sv">Swedish</option>
+                            <option value="sw">Swahili</option>
+                            <option value="ta">Tamil</option>
+                            <option value="te">Telugu</option>
+                            <option value="tg">Tajik</option>
+                            <option value="th">Thai</option>
+                            <option value="tl">Filipino</option>
+                            <option value="tr">Turkish</option>
+                            <option value="ug">Uyghur</option>
+                            <option value="uk">Ukrainian</option>
+                            <option value="ur">Urdu</option>
+                            <option value="uz">Uzbek</option>
+                            <option value="vi">Vietnamese</option>
+                            <option value="xh">Xhosa</option>
+                            <option value="yi">Yiddish</option>
+                            <option value="yo">Yoruba</option>
+                            <option value="zh-cn">Chinese (Simplified)</option>
+                            <option value="zh-tw">Chinese (Traditional)</option>
+                            <option value="zu">Zulu</option>
+                        </select>
+                    </div>
                     <textarea onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate" className="text-input" id=""></textarea>
                     <div className="mx-0 text-output" id="">{translated}</div>
+                    <i className="icon-micro" onClick={handleSpeechToText}><HiOutlineMicrophone /></i>
                     <i className="icon-speaker" onClick={() => readInput(textInput)} ><HiOutlineSpeakerWave /></i>
                     <div className="mt-2 p-0">
                     <span><button onClick={handleDetect} className="buttonDetect fs-6 col-md-1 col-3 btn btn-success">{isLoadingDetect ? <AiOutlineLoading3Quarters /> : 'Detect'}</button></span>
@@ -613,7 +759,7 @@ function layoutDetect() {
                 <hr />
                 <div>
                     {selectImg &&
-                        <div className="img-input col-10 mx-auto pb-3"><img className="pb-1" src={URL.createObjectURL(selectImg)} alt="" /></div> 
+                        <div className="img-input col-10 mx-auto pb-3 text-center"><img className="pb-1" src={URL.createObjectURL(selectImg)} alt="" /></div> 
                     }
 
                     <div className="wrap-detect">
@@ -645,21 +791,6 @@ function layoutDetect() {
                         </div>
                     }
                     </div>
-
-                    {/* {translated && paragraph.length > 0 &&
-                        <div className="mx-auto">
-                        <h2 className="text-white textShadow">Translated</h2>
-                        <ul className="backgroundBox text-start">
-                            {paragraph.map((result, index) => (
-                                <li key={index}>
-                                    <p>{result}</p>
-                                </li>
-                            ))}
-                            <p><strong>All: </strong>{translated}</p>           
-                        </ul>
-                        <p><button onClick={() => handleSwap()} className="btn btn-success"><IoIosSwap className="fs-4"/></button></p>
-                        </div>
-                    } */}
                 </div>
                     
             </div>

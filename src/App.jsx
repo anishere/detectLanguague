@@ -2,7 +2,6 @@
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutDetect from './components/layoutDetect'
-import Layoutnew from './components/layoutnew'
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -26,17 +25,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-import videoBackground from './assets/DoggieCorgi.mp4'
-
 function App() {
 
   return (
     <div className='App'>
-      {/* <video autoPlay muted loop id="myVideo">
-        <source src={videoBackground}/>
-      </video> */}
       <LayoutDetect></LayoutDetect>
-      <Layoutnew></Layoutnew>
     </div>
   )
 }
