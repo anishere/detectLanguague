@@ -583,7 +583,9 @@ function layoutDetect() {
         { code: 'xh-ZA', name: 'Xhosa (South Africa)' },
         { code: 'yi-DE', name: 'Yiddish (Germany)' },
         { code: 'yo-NG', name: 'Yoruba (Nigeria)' },
-        { code: 'zu-ZA', name: 'Zulu (South Africa)' }
+        { code: 'zu-ZA', name: 'Zulu (South Africa)' },
+        { code: 'zh-CN', name: 'Chinese (Simplified, China)' }, // Tiếng Trung (giản thể, Trung Quốc)
+        { code: 'zh-TW', name: 'Chinese (Traditional, Taiwan)'},
     ];
 
     //const [isRecording, setIsRecording] = useState(false);
