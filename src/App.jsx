@@ -25,11 +25,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+import Test from './components/test'
+
 function App() {
 
   return (
     <div className='App'>
       <LayoutDetect></LayoutDetect>
+      {/* <Test></Test> */}
     </div>
   )
 }

@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { IoIosSwap } from "react-icons/io";
+import { FaRegCircleStop } from "react-icons/fa6";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { HiOutlineSpeakerWave } from "react-icons/hi2";
 import { MdInsertPhoto } from "react-icons/md";
 import { HiOutlineMicrophone } from "react-icons/hi2";
-
+import { TiDeleteOutline } from "react-icons/ti";
 import { createWorker } from 'tesseract.js';
+import SpeechRecognition, {useSpeechRecognition} from "react-speech-recognition";
 
 import { APIKeys } from "./APIKey";
 
@@ -588,32 +590,59 @@ function layoutDetect() {
         { code: 'zh-TW', name: 'Chinese (Traditional, Taiwan)'},
     ];
 
+    const [isSpeech, setIsSpeech] = useState(false)
+
+    const startListening = () => {
+        setIsSpeech(true);
+        SpeechRecognition.startListening({ continuous: true, language: speechRecognitionLang });
+    };
+
+    const { transcript, browserSupportsSpeechRecognition, resetTranscript} = useSpeechRecognition();
+
+    if (!browserSupportsSpeechRecognition) {
+        return <div>Bạn trình duyệt không hỗ trợ nhận dạng giọng nói.</div>;
+    }
+
+    const handleStopSpeech = () => {
+        SpeechRecognition.stopListening();
+        setIsSpeech(false);
+    }
+ 
+    useEffect(() => {
+        setTextInput(transcript)
+    },[transcript])
+
+    const handleDeleteTextInput = () => {
+        setTextInput('');
+        resetTranscript();
+    }
+
     //const [isRecording, setIsRecording] = useState(false);
 
     // Function to handle Speech-to-Text conversion
-    const handleSpeechToText = () => {
-        const recognition = new window.webkitSpeechRecognition() || window.SpeechRecognition();
-        recognition.lang = speechRecognitionLang; // Set language for speech recognition
+    // const handleSpeechToText = () => {
+    //     const recognition = new window.webkitSpeechRecognition() || window.SpeechRecognition();
+    //     recognition.lang = speechRecognitionLang; // Set language for speech recognition
 
-        recognition.onresult = (event) => {
-            const speechToText = event.results[0][0].transcript;
-            setTextInput(speechToText); // Set the recognized text to input field
-        };
+    //     recognition.onresult = (event) => {
+    //         const speechToText = event.results[0][0].transcript;
+    //         setTextInput(speechToText); // Set the recognized text to input field
+    //     };
 
-        recognition.onerror = (event) => {
-            console.error('Speech recognition error:', event.error);
-        };
+    //     recognition.onerror = (event) => {
+    //         console.error('Speech recognition error:', event.error);
+    //     };
 
-        recognition.start(); // Start speech recognition  
-    };
+    //     recognition.start(); // Start speech recognition  
+    // };
 
-    useEffect(() => {
-        // Load voices when component mounts
-        window.speechSynthesis.onvoiceschanged = () => {
-            const voices = window.speechSynthesis.getVoices();
-            console.log(voices);
-        };      
-    }, []);
+    // useEffect(() => {
+    //     // Load voices when component mounts
+    //     window.speechSynthesis.onvoiceschanged = () => {
+    //         const voices = window.speechSynthesis.getVoices();
+    //         console.log(voices);
+    //     };      
+    // }, []);
 
     return (
         <div className="layoutDetect">
@@ -753,7 +782,10 @@ function layoutDetect() {
                     </div>
                     <textarea onChange={(e) => setTextInput(e.target.value)} value={textInput} placeholder="Enter text to translate" className="text-input" id=""></textarea>
                     <div className="mx-0 text-output" id="">{translated}</div>
-                    <i className="icon-micro" onClick={handleSpeechToText}><HiOutlineMicrophone /></i>
+                    <i className="icon-deleteText" onClick={handleDeleteTextInput}><TiDeleteOutline /></i>
+                    {isSpeech ? (
+                    <i className="icon-micro" onClick={handleStopSpeech}><FaRegCircleStop /></i>
+                    ) : <i className="icon-micro" onClick={startListening}><HiOutlineMicrophone /></i>}
                     <i className="icon-speaker" onClick={() => readInput(textInput)} ><HiOutlineSpeakerWave /></i>
                     <i className="icon-speaker-output" onClick={() => readInput(translated)} ><HiOutlineSpeakerWave /></i>
                     <div className="mt-2 p-0">
@@ -797,7 +829,6 @@ function layoutDetect() {
                     }
                     </div>
                 </div>
-                    
             </div>
         </div>
     );

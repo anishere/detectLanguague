@@ -155,8 +155,21 @@ h2.textShadow {
   text-align: center;
 }
 
+.icon-deleteText {
+  top: 84px;
+  left: 606px;
+  position: absolute;
+  font-size: 1.8rem;
+  cursor: pointer;
+  width: 50px !important;
+}
+
 .icon-micro:hover {
   background-color: #f5f5f5;
+}
+
+.icon-deleteText:hover {
+  opaacity: 0.5;
 }
 
 .tool {
