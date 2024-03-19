@@ -597,16 +597,20 @@ function layoutDetect() {
         SpeechRecognition.startListening({ continuous: true, language: speechRecognitionLang });
     };
 
-    const { transcript, browserSupportsSpeechRecognition, resetTranscript} = useSpeechRecognition();
+    const { transcript, resetTranscript} = useSpeechRecognition();
 
-    if (!browserSupportsSpeechRecognition) {
-        return <div>Bạn trình duyệt không hỗ trợ nhận dạng giọng nói.</div>;
-    }
+    // if (!browserSupportsSpeechRecognition) {
+    //     return <div>Bạn trình duyệt không hỗ trợ nhận dạng giọng nói.</div>;
+    // }
 
     const handleStopSpeech = () => {
         SpeechRecognition.stopListening();
         setIsSpeech(false);
     }
+
+    const handleSelectLanguage = (e) => {
+        setSpeechRecognitionLang(e.target.value);
+    };
  
     useEffect(() => {
         setTextInput(transcript)
@@ -650,7 +654,7 @@ function layoutDetect() {
                 <h2 className="text-center mb-4">Detect & Translate</h2>
                 <div className="row wrap">
                     <span className="tool">
-                        <label htmlFor="file" className="btn btn-primary "><MdInsertPhoto className="fs-4" /> Photo</label>
+                        <label htmlFor="file" className="btn btn-success"><MdInsertPhoto className="fs-4" /> Photo</label>
                         <input id="file" type="file" accept="image/*" onChange={(e)=>handleChangeImg(e)} />
                     </span>
                     <div className="area-select">
@@ -658,7 +662,7 @@ function layoutDetect() {
                             className="form-select form-select-micro"
                             aria-label="Select recognition language"
                             value={speechRecognitionLang}
-                            onChange={(e) => setSpeechRecognitionLang(e.target.value)}
+                            onChange={(e) => handleSelectLanguage(e)}
                         >
                             {languages.map((language, index) => (
                                 <option key={index} value={language.code}>{language.name}</option>

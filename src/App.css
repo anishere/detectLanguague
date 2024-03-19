@@ -59,7 +59,7 @@ h2.textShadow {
   margin-bottom: 6px;
   background-color: white;
   border-radius: 6px;
-  border: 1px solid #ce00fc;
+  border: 1px solid red;
 }
 
 #file {
@@ -205,5 +205,9 @@ h2.textShadow {
   .icon-micro {
     bottom: 196px;
     left: 330px;
+  }
+
+  .icon-deleteText {
+    left: 361px;
   }
 }
