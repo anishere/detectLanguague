@@ -24,7 +24,7 @@ function layoutDetect() {
     const [isLoadingTrans, setIsLoadingTrans] = useState(false);
 
     const [speechRecognitionLang, setSpeechRecognitionLang] = useState('en-US'); // Default language
-
+    
     const handleDetect = async () => {
         setIsLoadingDetect(true);
         const textArray = textInput.split(/[.,:;]/).filter(Boolean);
@@ -32,26 +32,27 @@ function layoutDetect() {
         const newLanguageResults = [];
         
         for (const text of textArray) {
+            const encodedParams = new URLSearchParams();
+            encodedParams.set('text', text);
+    
             const options = {
                 method: 'POST',
-                url: 'https://google-translate-v21.p.rapidapi.com/detect',
+                url: 'https://google-translate113.p.rapidapi.com/api/v1/translator/detect-language',
                 headers: {
-                    'content-type': 'application/json',
+                    'content-type': 'application/x-www-form-urlencoded',
                     'X-RapidAPI-Key': APIKeys,
-                    'X-RapidAPI-Host': 'google-translate-v21.p.rapidapi.com'
+                    'X-RapidAPI-Host': 'google-translate113.p.rapidapi.com'
                 },
-                data: {
-                    text: text
-                }
+                data: encodedParams
             };
     
             try {
                 const response = await axios.request(options);
-                console.log(`Detected language for "${text}":`, response.data.detected_language);
+                console.log(`Detected language for "${text}":`, response.data.source_lang);
     
                 newLanguageResults.push({
                     text: text,
-                    language: response.data.detected_language
+                    language: response.data.source_lang
                 });
             } catch (error) {
                 console.error('Error detecting language:', error);
@@ -75,7 +76,7 @@ function layoutDetect() {
         setLanguageResults(newLanguageResults);
         setLanguagePercentages(languagePercentages);
         setIsLoadingDetect(false);
-    }
+    }    
 
     const handleTranslate = async () => {
         setIsLoadingTrans(true);
@@ -85,26 +86,28 @@ function layoutDetect() {
         const paragraph = [];
     
         for (const text of textArray) {
+            const encodedParams = new URLSearchParams();
+            encodedParams.set('from', 'auto');
+            encodedParams.set('to', targetLanguage);
+            encodedParams.set('text', text);
+    
             const options = {
                 method: 'POST',
-                url: 'https://google-translate-v21.p.rapidapi.com/translate',
+                url: 'https://google-translate113.p.rapidapi.com/api/v1/translator/text',
                 headers: {
-                    'content-type': 'application/json',
+                    'content-type': 'application/x-www-form-urlencoded',
                     'X-RapidAPI-Key': APIKeys,
-                    'X-RapidAPI-Host': 'google-translate-v21.p.rapidapi.com'
+                    'X-RapidAPI-Host': 'google-translate113.p.rapidapi.com'
                 },
-                data: {
-                    text_to_translate: text,
-                    dest: targetLanguage
-                }
+                data: encodedParams
             };
     
             try {
                 const response = await axios.request(options);
-                paragraph.push(`"${text}": ${response.data.translation}`)
-                console.log(`"${text}":`, response.data.translation);
+                console.log(`"${text}":`, response.data.trans);
     
-                translatedTextArray.push(response.data.translation);
+                paragraph.push(`"${text}": ${response.data.trans}`);
+                translatedTextArray.push(response.data.trans);
             } catch (error) {
                 console.error('Error translating text:', error);
             }
@@ -114,7 +117,7 @@ function layoutDetect() {
         //setParagraph(paragraph)
         setTranslated(translatedTextArray.join('. '));
         setIsLoadingTrans(false);
-    }
+    }    
 
     function getLanguageName(languageCode) {
         switch (languageCode) {
@@ -360,23 +363,24 @@ function layoutDetect() {
 
     const readInput = async (textInput) => {
         let languageCode;
+        const encodedParams = new URLSearchParams();
+        encodedParams.set('text', textInput);
+    
         const options = {
             method: 'POST',
-            url: 'https://google-translate-v21.p.rapidapi.com/detect',
+            url: 'https://google-translate113.p.rapidapi.com/api/v1/translator/detect-language',
             headers: {
-                'content-type': 'application/json',
+                'content-type': 'application/x-www-form-urlencoded',
                 'X-RapidAPI-Key': APIKeys,
-                'X-RapidAPI-Host': 'google-translate-v21.p.rapidapi.com'
+                'X-RapidAPI-Host': 'google-translate113.p.rapidapi.com'
             },
-            data: {
-                text: `${textInput}`
-            }
+            data: encodedParams
         };
     
         try {
             const response = await axios.request(options);
-            languageCode = response.data.detected_language;
-            console.log("Detected language:", languageCode);
+            console.log("Detected language:", response.data.source_lang_code);
+            languageCode = response.data.source_lang_code;
         } catch (error) {
             console.error("Error detecting language:", error);
             return; // Exit function if language detection fails
@@ -388,6 +392,22 @@ function layoutDetect() {
         const speech = new SpeechSynthesisUtterance(textInput);
         let voiceName = '';
         switch (languageCode) {
+            case 'zh-CN':
+                speech.lang = 'zh-CN';
+                voiceName = 'Google 普通话（中国大陆）';
+                break;
+            case 'zh-HK':
+                speech.lang = 'zh-HK';
+                voiceName = 'Google 粤語（香港）';
+                break;
+            case 'zh-TW':
+                speech.lang = 'zh-TW';
+                voiceName = 'Google 國語（臺灣）';
+                break;
+            case 'vi':
+                speech.lang = 'vi-VN';
+                voiceName = 'Google US English';
+                break;
             case 'de':
                 speech.lang = 'de-DE';
                 voiceName = 'Google Deutsch';
@@ -398,7 +418,7 @@ function layoutDetect() {
                 break;
             case 'es':
                 speech.lang = 'es-ES';
-                voiceName = 'Google español de Estados Unidos';
+                voiceName = 'Google español';
                 break;
             case 'fr':
                 speech.lang = 'fr-FR';
@@ -434,27 +454,11 @@ function layoutDetect() {
                 break;
             case 'pt':
                 speech.lang = 'pt-BR';
-                voiceName = 'Google português do Brasil';
+                voiceName = 'Google português';
                 break;
             case 'ru':
                 speech.lang = 'ru-RU';
                 voiceName = 'Google русский';
-                break;
-            case 'zh-CN':
-                speech.lang = 'zh-CN';
-                voiceName = 'Google 普通话（中国大陆）';
-                break;
-            case 'zh-HK':
-                speech.lang = 'zh-HK';
-                voiceName = 'Google 粤語（香港）';
-                break;
-            case 'zh-TW':
-                speech.lang = 'zh-TW';
-                voiceName = 'Google 國語（臺灣）';
-                break;
-            case 'vi':
-                speech.lang = 'vi-VN';
-                voiceName = 'Google US English';
                 break;
             default:
                 speech.lang = 'en-US';
@@ -483,7 +487,7 @@ function layoutDetect() {
                 alert("Text-to-speech failed. Please check your browser settings.");
             }
         }
-    }
+    }    
 
     const languages = [
         { code: 'af-ZA', name: 'Afrikaans (South Africa)' },
@@ -542,6 +546,7 @@ function layoutDetect() {
         { code: 'zu-ZA', name: 'Zulu (South Africa)' },
         { code: 'is-IS', name: 'Icelandic (Iceland)' },
         { code: 'it-IT', name: 'Italian (Italy)' },
+        { code: 'ja-JP', name: 'Japanese (Japan)' },
         { code: 'jv-ID', name: 'Javanese (Indonesia)' },
         { code: 'kn-IN', name: 'Kannada (India)' },
         { code: 'km-KH', name: 'Khmer (Cambodia)' },
@@ -619,6 +624,7 @@ function layoutDetect() {
     const handleDeleteTextInput = () => {
         setTextInput('');
         resetTranscript();
+        setTranslated('');
     }
 
     //const [isRecording, setIsRecording] = useState(false);
